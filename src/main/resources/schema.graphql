@@ -1,0 +1,31 @@
+type Author{
+    id: Float!
+    fullname: String
+    books:[Book]
+}
+
+type Book{
+    isbn: String!
+    title: String
+    edition: Int
+    publishedYear: Int
+    author: Author
+}
+
+type Query{
+    getAllAuthors:[Author]
+    getAuthor(authorID: Float):Author
+    getAllBooks:[Book]
+    getBookByIsbn(isbn: String!):Book
+    getBooksByAuthor(AuthorID: Float!):[Book]
+}
+
+input AuthorInput{
+    id: Float!
+    fullname: String
+}
+
+type Mutation{
+    updateAuthor(author: AuthorInput!):Author
+    deleteAuthor(authorId: Float!):Boolean
+}
