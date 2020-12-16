@@ -38,7 +38,6 @@
 	    <li><a href="#step-10-test-our-graphql">Step 10: Test our GraphQL</a></li>
 	    
    </ul>
-    
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
