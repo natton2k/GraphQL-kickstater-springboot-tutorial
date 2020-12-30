@@ -53,6 +53,8 @@ In the <b>dependencies</b> tag, we can include the dependencies as we often call
 	</dependencies>
 ```
 
+#### How and where to get the Maven dependencies integrated in our project ?
+
 Look inside the <b>dependency</b> tag we have the <i>groupId, artifactId, version, scope, ...</i>.
 If you are new to <b>Apache Maven</b>, you can download dependencies (libraries) from the <b>Maven Repository</b> just like how we download apps from the Google Play Store/App Store:
 
@@ -104,7 +106,227 @@ We need to take a look at the name <strong>-javadoc.jar</strong> and <strong>-so
 ![image-10](assets/10.png)
 
 In NetBeans IDE, we can see whether the dependency contains <i>downloaded dependency</i>, <i>javadoc</i>, <i>source</i>. You can download those just by right-clicking to that dependency of the current Maven project.
-![imag](..)
+![image-11](assets/11.png)
+
+In IntelliJ IDEA, we can check whether the <i>JavaDoc</i>, <i>Sources</i> of that dependency is downloaded or not.
+
+By right-clicking the current project, navigating to <i>Module (Project) Settings -> Libraries</i>
+![image-12](assets/12.png)
+
+
+#### Introduction to Jackson JSON Parser
+
+Why not XML Parser?
+- XML documents has been popular for decades for easy readability - a standard of configuration file/data storage-style for developers.
+- Despite to its powerful features but recently due to the need of fast data transfer and old-style SOAP Architecture are overweight compare to REST Architecture and JSON data transfer.
+
+Here is an example of how a XML data looks like:
+```xml
+<employees>
+    <employee>
+        <firstName>Bang</firstName>
+        <lastName>Ngo</lastName>
+    </employee>
+    <employee>
+        <firstName>Tien</firstName>
+        <lastName>Truong</lastName>
+    </employee>
+    <employee>
+        <firstName>Hoang</firstName>
+        <lastName>Nguyen</lastName>
+    </employee>
+</employees>
+```
+
+And here is an example of how a JSON data looks like:
+
+```json
+{  
+    "employees": [{  
+        "firstName": "Bang",  
+        "lastName": "Ngo"  
+    }, {  
+        "firstName": "Tien",  
+        "lastName": "Truong"  
+    }, {  
+        "firstName": "Hoang",  
+        "lastName": "Nguyen"  
+    }]  
+}  
+```
+
+As you can see the JSON-data structure looks simpler than the XML-data structure.
+
+In <b>Java</b> programming language, we have the <b>JAX-B</b>, <b>JAX-P</b> (Java API for XML) to parse (unmarshal) the XML content to Java Objects and to convert (marshal) Java Objects back to XML content.
+
+We can call this is a <b>Serialization</b> process to make a/an object(s) from the current language to the other language we want.
+
+We may have written <b>Java Object</b> into text file(s) as binary which makes only Java Programming Language only understand that structure but others can't even it's not readable.
+
+For people who studied the <b>Java Web</b> course at <b>FPT University</b>, you must have touched/configured the popular <b>web.xml</b> file.
+
+Before the Java Web Application can be run, the <b>XML Parser</b> as in NetBeans IDE we have <b>SAX Parser (Simple API for XML)</b> to check whether the XML is well-formed and validated or not.
+
+- Here is a list of XML Parser which are currently used at FPT University:
+    - Java DOM Parser.
+    - SAX Parser (Simple API for XML).
+    - StAX Parser (Streaming API for XML).
+    - TrAX Parser (Transformation API for XML).
+- Going through to the JSON Parser, we can list the popular parsers:
+    - Google GSON Parser.
+    - Jackson JSON Parser.
+    - DSL JSON Parser.
+    - Java EE 8+ JSON Parser.
+
+In this tutorial, we will show use show some examples of how to use Jackson JSON library at basic level in order to transform JSON to Java Object/Java Object to JSON.
+
+You will need these 2 dependencies:
+```xml
+    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.12.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.12.0</version>
+    </dependency>
+```
+
+The below snippet code is an example of how to convert JSON data to Java Object Data with the output:
+
+```
+Employees{employees=[Employee{firstName='Bang', lastName='Ngo'}, Employee{firstName='Tien', lastName='Truong'}, Employee{firstName='Hoang', lastName='Nguyen'}]}
+
+Process finished with exit code 0
+
+```
+
+```java
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+
+class Employee {
+    private String firstName;
+    private String lastName;
+    /* Getter - Setter - ToString */
+}
+
+class Employees {
+    private Employee[] employees;
+    /* Getter - Setter - ToString */
+}
+
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Employees empList = objectMapper
+                .readValue(getEmployeesJSONFromFile(), Employees.class);
+        System.out.println(empList);
+    }
+
+    private static String getEmployeesJSONFromFile() throws IOException {
+        /*Read 'employees.json' file and return it as string*/
+        return "Sample";
+    }
+}
+```
+
+The below snippet is an example of reading Java object - represented as ```Employees``` class and appended a new ```Employee``` and wrote back to the new JSON file:
+
+```java
+    public static void main(String[] args) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        Employees empList = objectMapper
+                .readValue(getEmployeesJSONFromFile(), Employees.class);
+        Employee emp = new Employee("Cong Thanh", "Pham");
+
+        Employee[] emps = Stream
+                .concat(Arrays.stream(empList.getEmployees()),
+                        Arrays.stream(new Employee[]{emp}))
+                .toArray(Employee[]::new);
+
+        objectMapper.writeValue(new File("newEmployees.json"), new Employees(emps));
+        System.out.println("Success!");
+    }
+```
+
+Explore it more yourself!
+
+#### Introduction to GraphQL Spring Boot Kickstart
+
+In this tutorial, we assume you have already known REST architecture.
+
+Take an example that I have a working WebService End-point which serves ```Student``` resources:
+
+```
+GET     /students       Get all students
+GET     /student/{id}   Get specific student with given id
+```
+
+```java
+class Student {
+    private String id;
+    private String name;
+    private int age;
+    private float height;
+    private float avgMark;
+    /* Constructor - Getter - Setter */
+}
+```
+
+Result with ```/student/1```:
+```json
+{
+    "id": "1",
+    "name": "bangmaple",
+    "age": 20,
+    "height": 178.0,
+    "avgMark": 8.4
+}
+```
+
+What if we only need a student with the specific id with only specific properties (id, name)?
+```json
+{
+    "id": "1",
+    "name": "bangmaple"
+}
+```
+We are expecting to retrieve a student with fewer properties.
+
+##### What is exactly GraphQL and why we need it?
+![image-13](assets/13.png)
+
+In order to continue with the next tutorial, please add these dependencies into your ```pom.xml``` file:
+```xml
+<dependency>  
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>  
+    <version>2.11.0</version>  
+</dependency>
+<dependency>
+    <groupId>com.graphql-java-kickstart</groupId>  
+    <artifactId>graphql-spring-boot-starter</artifactId>  
+    <version>8.0.0</version>  
+</dependency>  
+<dependency>  
+    <groupId>com.graphql-java-kickstart</groupId>  
+    <artifactId>graphiql-spring-boot-starter</artifactId>  
+    <version>8.0.0</version>  
+    <scope>runtime</scope>  
+</dependency>
+```
+
 
 #### Thank you
 
