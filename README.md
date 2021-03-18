@@ -65,7 +65,7 @@ This is a tutorial for building GraphQL server with Spring Boot using GraphQL Ja
 ### What you need
 * A text editor or IDE - We use Inteliji in this tutorial but you can choose your own preferred IDE
 * [JDK 1.8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) or later
-*  [Gradle 4+](http://www.gradle.org/downloads) or [Maven 3.2+](https://maven.apache.org/download.cgi)
+* [Maven 3.2+](https://maven.apache.org/download.cgi)
 
 ###  Prior knowledge
 * If you don't know how Spring Boot work, what is GraphQL, what is JPA, you can click these link below and learn more
